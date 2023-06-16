@@ -111,7 +111,7 @@ client.on( 'messageCreate', async ( message ) =>
         let response = await openai.createChatCompletion( {
             model: ChatGPTModel,
             temperature: 0.6,
-            max_tokens: 7000,
+            max_tokens: BotTokenAmount,
             messages: [
                 {
                     role: 'system',
