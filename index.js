@@ -85,8 +85,8 @@ client.on( 'messageCreate', async ( message ) =>
     * История сообщений
     * @type {Array}
     */
-    //let MessageHistory = [];
-    let MessageHistory = JSON.parse( fs.readFileSync( './json/history.json' ).toString() );
+    let MessageHistory = [];
+    //let MessageHistory = JSON.parse( fs.readFileSync( './json/history.json' ).toString() );
     if ( message.channel.id != DiscordChannelID ) return;
     if ( message.author.id == client.user.id )
     {
@@ -108,7 +108,6 @@ client.on( 'messageCreate', async ( message ) =>
         fs.writeFileSync( './json/history.json', JSON.stringify( MessageHistory, '\n', 4 ) );
     }
 
-    console.log( typeof ( BotTokenAmount ) );
     if ( message.author.id == client.user.id ) return;
     await message.channel.sendTyping();
     // Генерируем ответ с использованием ChatGPT
