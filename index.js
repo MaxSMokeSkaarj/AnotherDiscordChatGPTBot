@@ -86,14 +86,13 @@ client.on( 'messageCreate', async ( message ) =>
     * @type {Array}
     */
     //let MessageHistory = [];
-         let MessageHistory = JSON.parse( fs.readFileSync( './json/history.json' ).toString() );
+    let MessageHistory = JSON.parse( fs.readFileSync( './json/history.json' ).toString() );
     if ( message.channel.id != DiscordChannelID ) return;
-    await message.channel.sendTyping();
     if ( message.author.id == client.user.id )
     {
         MessageHistory.unshift( {
             role: 'assistant',
-            message: [ ...MessageHistory ],
+            content: message.content,
             name: message.author.username.replace( /\s+/g, '_' ).replace( /[^\w\s]/gi, '' ),
         } );
         if ( MessageHistory.length > 10 ) MessageHistory.pop();
@@ -102,7 +101,7 @@ client.on( 'messageCreate', async ( message ) =>
     {
         MessageHistory.unshift( {
             role: 'user',
-            message: message.content,
+            content: message.content,
             name: message.author.username.replace( /\s+/g, '_' ).replace( /[^\w\s]/gi, '' ),
         } );
         if ( MessageHistory.length > 10 ) MessageHistory.pop();
@@ -111,12 +110,13 @@ client.on( 'messageCreate', async ( message ) =>
 
     console.log( typeof ( BotTokenAmount ) );
     if ( message.author.id == client.user.id ) return;
+    await message.channel.sendTyping();
     // Генерируем ответ с использованием ChatGPT
     let response = await openai.createChatCompletion( {
         model: ChatGPTModel,
         temperature: 0.6,
         max_tokens: BotTokenAmount,
-        messages: [ ...MessageHistory ]
+        messages: MessageHistory
     } );
 
     // Отправляем ответ в Discord канал
