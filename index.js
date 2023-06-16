@@ -1,36 +1,37 @@
 require( 'dotenv' ).config();
-const { Client, Events, GatewayIntentBits } = require( 'discord.js' );
+const { Client, Events, GatewayIntentBits, discordSort } = require( 'discord.js' );
 const { Configuration, OpenAIApi } = require( "openai" );
+const fs = require( 'fs' );
 
 /** 
  * Токен бота Discord
- * @type {string}
+ * @type {String}
 */
 let DiscordToken = process.env.DiscordToken;
 
 /** 
  * Токен OpenAI
- * @type {string}
+ * @type {String}
 */
 let OpenAIToken = process.env.OpenAIToken;
 
 /** URL OpenAI
- * @type {string}
+ * @type {String}
 */
 let OpenAIURL = process.env.OpenAIURL;
 
 /** Discord channel ID
- * @type {string}
+ * @type {String}
 */
 let DiscordChannelID = process.env.DiscordChannelID;
 
 /** Модель поведения бота
- * @type {string}
+ * @type {String}
 */
 let ChatGPTModel = process.env.ChatGPTModel;
 
 /** ID чата Discord
- * @type {Number}
+ * @type {String}
 */
 let DiscordBotID = process.env.DiscordBotID;
 
@@ -38,7 +39,7 @@ let DiscordBotID = process.env.DiscordBotID;
  * Количество Токенов ChatGPT
  * @type {Number}
 */
-let BotTokenAmount = process.env.BotTokenAmount;
+let BotTokenAmount = Number( process.env.BotTokenAmount );
 
 // Создаем экземпляр клиента Discord
 /** Экземпляр клиента Discord    */
@@ -76,61 +77,50 @@ client.on( 'ready', () =>
     console.log( `Logged in as ${ client.user.tag }` );
 } );
 
-// Создаём историю сообщений
-/**
- * История сообщений
- * @type {Object[]}
-*/
-let MessageHistory = [];
-
 // Подключаемся к событию "message" Discord клиента 
 client.on( 'messageCreate', async ( message ) =>
 {
 
-    // Проверяем, что сообщение отправлено в определенный канал и на то, что бот не отвечает на свои ответы
-    if ( message.channel.id === DiscordChannelID && message.author.id != DiscordBotID )
+    /**
+    * История сообщений
+    * @type {Array}
+    */
+    //let MessageHistory = [];
+         let MessageHistory = JSON.parse( fs.readFileSync( './json/history.json' ).toString() );
+    if ( message.channel.id != DiscordChannelID ) return;
+    await message.channel.sendTyping();
+    if ( message.author.id == client.user.id )
     {
-        // Посылаем Discord'у что бот начинает писать
-        message.channel.sendTyping();
-
-        // проверяем на команду очистки памяти
-        if ( message.content == "!Очистить историю" )
-        {
-            MessageHistory = []; // Приметивная очистка
-            message.reply( "--- Очистка истории выполнена! ---" );
-            return; // Прерываем чтобы ничего не поломать.
-        }
-        // Вставляем сообщение пользователя в начало
-        MessageHistory.unshift( { content: message.content, role: 'user' } );
-        if ( MessageHistory.length > 10 )
-        {
-            MessageHistory.pop(); // Если превысили максимум, убираем с конца.
-        }
-
-        // Генерируем ответ с использованием ChatGPT
-        let response = await openai.createChatCompletion( {
-            model: ChatGPTModel,
-            temperature: 0.6,
-            max_tokens: BotTokenAmount.to,
-            messages: [
-                {
-                    role: 'system',
-                    content: ''
-                },
-                ...MessageHistory
-            ]
+        MessageHistory.unshift( {
+            role: 'assistant',
+            message: [ ...MessageHistory ],
+            name: message.author.username.replace( /\s+/g, '_' ).replace( /[^\w\s]/gi, '' ),
         } );
-
-        // Отправляем ответ в Discord канал
-        message.reply( response.data.choices[ 0 ].message.content );
-
-        // Вставляем сообщение бота в начало.
-        MessageHistory.unshift( { content: response.data.choices[ 0 ].message.content, role: 'system' } );
-        if ( MessageHistory.length > 10 )
-        {
-            MessageHistory.pop(); // Если превысили максимум, убираем с конца.
-        }
+        if ( MessageHistory.length > 10 ) MessageHistory.pop();
+        fs.writeFileSync( './json/history.json', JSON.stringify( MessageHistory, '\n', 4 ) );
+    } else
+    {
+        MessageHistory.unshift( {
+            role: 'user',
+            message: message.content,
+            name: message.author.username.replace( /\s+/g, '_' ).replace( /[^\w\s]/gi, '' ),
+        } );
+        if ( MessageHistory.length > 10 ) MessageHistory.pop();
+        fs.writeFileSync( './json/history.json', JSON.stringify( MessageHistory, '\n', 4 ) );
     }
+
+    console.log( typeof ( BotTokenAmount ) );
+    if ( message.author.id == client.user.id ) return;
+    // Генерируем ответ с использованием ChatGPT
+    let response = await openai.createChatCompletion( {
+        model: ChatGPTModel,
+        temperature: 0.6,
+        max_tokens: BotTokenAmount,
+        messages: [ ...MessageHistory ]
+    } );
+
+    // Отправляем ответ в Discord канал
+    message.reply( response.data.choices[ 0 ].message.content );
 } );
 
 
