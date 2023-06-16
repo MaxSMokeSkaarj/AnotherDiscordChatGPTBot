@@ -34,6 +34,12 @@ let ChatGPTModel = process.env.ChatGPTModel;
 */
 let DiscordBotID = process.env.DiscordBotID;
 
+/** 
+ * Количество Токенов ChatGPT
+ * @type {string}
+*/
+let BotTokenAmount = process.env.BotTokenAmount;
+
 // Создаем экземпляр клиента Discord
 /** Экземпляр клиента Discord    */
 const client = new Client( {
