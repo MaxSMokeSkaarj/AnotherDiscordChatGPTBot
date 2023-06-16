@@ -30,13 +30,13 @@ let DiscordChannelID = process.env.DiscordChannelID;
 let ChatGPTModel = process.env.ChatGPTModel;
 
 /** ID чата Discord
- * @type {string}
+ * @type {Number}
 */
 let DiscordBotID = process.env.DiscordBotID;
 
 /** 
  * Количество Токенов ChatGPT
- * @type {string}
+ * @type {Number}
 */
 let BotTokenAmount = process.env.BotTokenAmount;
 
@@ -111,7 +111,7 @@ client.on( 'messageCreate', async ( message ) =>
         let response = await openai.createChatCompletion( {
             model: ChatGPTModel,
             temperature: 0.6,
-            max_tokens: BotTokenAmount,
+            max_tokens: BotTokenAmount.to,
             messages: [
                 {
                     role: 'system',
