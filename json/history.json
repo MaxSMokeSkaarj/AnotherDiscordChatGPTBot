@@ -1,22 +1,3 @@
 [
-    {
-        "role": "assistant",
-        "content": "I'm sorry, I do not understand what you are trying to communicate. Can you please provide more context or information?",
-        "name": "ChatGPT"
-    },
-    {
-        "role": "assistant",
-        "content": "Извините, я не понимаю, что вы хотели сказать. Можете объяснить подробнее?",
-        "name": "ChatGPT"
-    },
-    {
-        "role": "user",
-        "content": "УРА ТЫ ЖИВ",
-        "name": "vfdgnfuwmxzhmlu9"
-    },
-    {
-        "role": "user",
-        "content": "ntghm",
-        "name": "vfdgnfuwmxzhmlu9"
-    }
+
 ]
