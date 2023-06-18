@@ -129,5 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# History json
-json/history.json
+# History json and temp file
+#json/history.json
+message.txt
