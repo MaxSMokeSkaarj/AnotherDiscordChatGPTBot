@@ -130,5 +130,5 @@ dist
 .pnp.*
 
 # History json and temp file
-#json/history.json
+json/history.json
 message.txt
