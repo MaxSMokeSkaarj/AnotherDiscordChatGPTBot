@@ -1,6 +1,6 @@
-require( 'dotenv' ).config();
-const { GPT } = require( './lib/driver' );
-
+import { configDotenv } from 'dotenv';
+configDotenv();
+import GPT from './lib/driver.mjs';
 /** 
  * Токен бота Discord
  * @type {String}
@@ -39,3 +39,5 @@ let BotTokenAmount = Number( process.env.BotTokenAmount );
 
 let ChatGPT = new GPT( DiscordToken, OpenAIToken, OpenAIURL, DiscordChannelID, ChatGPTModel, DiscordBotID, BotTokenAmount );
 ChatGPT.run();
+ChatGPT
+
