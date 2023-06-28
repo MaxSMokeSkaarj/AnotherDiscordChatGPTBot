@@ -91,7 +91,7 @@ export default class GPT {
 
         let MessageHistory = JSON.parse( fs.readFileSync( './json/history.json' ).toString() );
 
-        client.on( "messageCreate", async ( message ) => {
+        client.on( "messageCreate", async ( message:any ) => {
             if ( message.content == "!очистить историю" ) {
                 MessageHistory = [];
                 fs.writeFileSync( './json/history.json', JSON.stringify( MessageHistory, `\n`, 4 ) );

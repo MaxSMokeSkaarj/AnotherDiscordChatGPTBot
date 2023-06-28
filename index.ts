@@ -1,5 +1,5 @@
 import "https://deno.land/std@0.192.0/dotenv/load.ts";
-import GPT from './lib/driver.mts';
+import GPT from './lib/driver.ts';
 
 /** 
  * Токен бота Discord
